@@ -1,0 +1,163 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AI Artist</title>
+    <link rel="shortcut icon" href="/static/assets/favicon-16x16.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Baloo + Inconsolata + Noto Sans font from GFonts -->
+    <link href="https://fonts.googleapis.com/css?family=Baloo+2|Inconsolata:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300&display=swap" rel="stylesheet">
+
+    <!-- Pure css cdn -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-min.css">
+
+    <!-- Cdns for Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- CDN to fontawesome -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="https://kit.fontawesome.com/76b2b49413.js" crossorigin="anonymous"></script>
+
+    <!-- Main css file -->
+    <link rel="stylesheet" href="../static/css/base.css">
+
+    {% block head %}
+    {% endblock %}
+
+    <div class="header">
+        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+            <a class="pure-menu-heading" href="https://www.aisingapore.org/">Team 2 - AI Artist</a>
+
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+                <li class="pure-menu-item"><a href="/" class="pure-menu-link">What is Style Transfer</a></li>
+                <li class="pure-menu-item"><a href="/" class="pure-menu-link">Documentation</a></li>
+                <li class="pure-menu-item"><a href="/model" class="pure-menu-link">Model</a></li>
+                </li>
+            </ul>
+        </div>
+    </div>
+</head>
+<body>
+
+{% block body %}
+{% endblock %}
+
+<!-- Javascript -->
+<script>
+    var app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                selectedFile: null,
+                imageURL: null,
+                genURL: null,
+                results: null,
+                errorMessage: "",
+                presetStyle: true,
+                ownStyle: false,
+                artist: 'NIL'
+            }
+        },
+        methods: {
+            onFileChanged(event) {
+                this.selectedFile = event.target.files[0];
+                this.imageURL = URL.createObjectURL(this.selectedFile);
+                var filename = this.selectedFile.name.split(".")[0];
+                console.log(filename);
+                var full = filename + '.png';
+
+                // this.genURL = '../static/assets/generated/'.concat(full);
+                // this.genURL = '../temp.png';
+                // this.genURL = '../static/assets/temp.png'
+                console.log(this.selectedFile.name);
+                this.results = null;
+            },
+            onUpload() {
+                let vm = this;
+                const formData = new FormData()
+                formData.append('file', this.selectedFile)
+                formData.append('filename', this.selectedFile.name)
+                formData.append('artist', this.artist)
+                console.log("calling predict5");
+                axios.post('predict', formData)
+                    .then(function (response) {
+                      console.log(response);
+                      console.log(response.request);
+                      console.log(response.data.filepath);
+                      console.log(response.request.response)
+                    //   vm.genURL = '../static/assets/'.concat(response.data.filepath);
+                      vm.genURL = '../static/assets/stylized.png';
+                      // vm.genURL = response.data.filepath;
+                      vm.results = response.data;
+                        // console.log("results");
+                        // console.log('blech');
+                        console.log(response);
+                        // console.log(response.request);
+                        // console.log(response.data);
+                        // console.log(response.request.data.filepath);
+                    })
+                    .catch(function (error) {
+                        vm.errorMessage = error.response.data.error_message;
+                        console.log(error);
+                        console.log(error.response);
+                        console.log(error.response.data);
+                    });
+            },
+            sortBy: function(e) {
+                console.log(e.target.value);
+                this.artist = e.target.value;
+                if(this.imageURL != null){
+                  // var script = document.currentScript;
+                  // var fullUrl = script.src;
+                  console.log('Deleting generated image');
+                  // var fs = require(['fs']);
+                  // fs.unlinkSync(this.imageURL);
+                  const delData = new FormData()
+                  delData.append('filepath', this.genURL)
+                  axios.post('delete', delData)
+                      .then(function (response) {
+                          console.log(response);
+                      })
+                      .catch(function (error) {
+                          vm.errorMessage = error.response.data.error_message;
+                          console.log(error);
+                      });
+                }
+                this.imageURL = null;
+                this.results = null;
+
+            },
+            clear: function(e) {
+                e.target.value = "";
+                if(this.imageURL != null){
+                  // var script = document.currentScript;
+                  // var fullUrl = script.src;
+                  console.log('Deleting generated images');
+                  // var fs = require(['fs']);
+                  // fs.unlinkSync(this.imageURL);
+                  const delData = new FormData()
+                  delData.append('filepath', this.genURL)
+                  axios.post('delete', delData)
+                      .then(function (response) {
+                          console.log(response);
+                      })
+                      .catch(function (error) {
+                          vm.errorMessage = error.response.data.error_message;
+                          console.log(error);
+                      });
+                }
+                this.imageURL = null;
+                this.results = null;
+            },
+        }
+    })
+</script>
+
+</body>
+</html>

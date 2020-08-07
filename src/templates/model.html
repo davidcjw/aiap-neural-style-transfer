@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<!-- Model css file -->
+<link rel="stylesheet" href="../static/css/model.css">
+{% endblock %}
+
+
+{% block body %}
+<div class="splash-container" id="app">
+    <div class="splash-head">
+        <h2 class="splash-subhead">
+            First, choose an artist. Then, upload an image of your choice.
+        </h2>
+        <hr>
+
+        <!-- RADIO BUTTONS -->
+
+        <br>
+        <select v-model="selected" name='select_choice'  v-on:change="sortBy">
+            <option disabled value="">Please select one</option>
+            <option value="PICASSO">Pablo Picasso</option>
+            <option value="KEEFE">Georgia O'Keefe</option>
+            <option value="KLEE">Paul Klee</option>
+            <option value="MATISSE">Henri Matisse</option>
+            <option value="MIRO">Joan Miro</option>
+            <option value="DALI">Salvador Dali</option>
+            <option value="MONET">Claude Monet</option>
+            <option value="PISSARRO">Camille Pissarro</option>
+        </select>
+        <span>Selected: {{ selected }}</span>
+        <span v-html="selected"></span>
+
+        <br><br>
+        <label for="file-upload" class="pure-button pure-button-primary">
+            Upload Image
+        </label>
+        <br>
+
+        <input id="file-upload" type="file" v-on:click="clear" @change="onFileChanged" multiple><br>
+
+        <img v-if="imageURL" :src="imageURL" class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+        <img v-if="results" :src="genURL" class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+        <!-- <img v-if="results" src="/static/assets/style_img.jpg" class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4"> -->
+
+        <br><br>
+        <button @click="onUpload" v-model="selected" v-if="imageURL && !results" class="pure-button pure-button-primary">
+            Draw me something, {{ selected }}<span v-html="selected"></span>!
+        </button>
+        <p @click="onUpload" v-if="imageURL && !results">Please be patient hor, inference takes a few seconds...</p>
+
+
+    </div>
+</div>
+
+{% endblock %}

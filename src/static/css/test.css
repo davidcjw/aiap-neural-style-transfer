@@ -1,0 +1,36 @@
+input[type="file"] {
+    display: none;
+}
+
+/* MAIN BODY */
+.splash-container {
+    /* font-size: 20px; */
+    font-weight: bold;
+    /* color: white; */
+    /* border: 3px solid white; */
+    letter-spacing: 0.25em;
+    /* padding: 1em 1.6em; */
+    font-weight: 100;
+    border-radius: 5px;
+    line-height: 1em;
+    /* margin: 12% 20% 1%; */
+}
+
+.splash-head {
+    /* absolute center .splash within .splash-container */
+    width: 90%;
+    height: 80%;
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    /* text-align: center; */
+    text-transform: uppercase;
+}
+
+/* This is the subheading that appears on the blue section */
+.splash-subhead {
+    /* color: white; */
+    opacity: 0.9;
+    font-family: 'Baloo 2', cursive;
+    /* margin: 1% 20%; */
+}

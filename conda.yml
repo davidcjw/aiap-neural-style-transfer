@@ -1,0 +1,14 @@
+name: neural-style-transfer
+channels:
+  - defaults
+dependencies:
+  - python=3.6.7
+  - pip=19.0.3
+  - numpy=1.17.2 # so we get the mkl libs as well
+  - pip:
+    - pylint==2.3.1
+    - flask==1.1.1
+    - gunicorn==20.0.4
+    - waitress==1.3.1
+    - tensorflow==2.0.0
+    - pillow==7.0.0
